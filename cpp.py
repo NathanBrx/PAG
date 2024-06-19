@@ -120,7 +120,7 @@ def read_result(correspondance) :
     return path
 
 def multiplePathAnimation(graph,pathList):
-     """
+    """
     ### Paramètres
     - graph : NetworkX graph
         - [Graphe non orienté]

@@ -124,9 +124,10 @@ def multiplePathAnimation(graph,pathList):
     ### Paramètres
     - graph : NetworkX graph
         - [Graphe non orienté]
-    - pathList : list of routes osmnx
+    - pathList : List
+        - [list de routes osmnx]
     ### Opérations
-    - Créée, affiche et sauvegarde une animation des chemins donnés en paramètres
+    - Crée, affiche et sauvegarde une animation des chemins donnés en paramètres
     """
 
     def getNthValueFromEachTab(tab,n):

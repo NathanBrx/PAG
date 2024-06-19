@@ -120,6 +120,14 @@ def read_result(correspondance) :
     return path
 
 def multiplePathAnimation(graph,pathList):
+     """
+    ### Paramètres
+    - graph : NetworkX graph
+        - [Graphe non orienté]
+    - pathList : list of routes osmnx
+    ### Opérations
+    - Créée, affiche et sauvegarde une animation des chemins donnés en paramètres
+    """
 
     def getNthValueFromEachTab(tab,n):
         res=[]
@@ -143,13 +151,13 @@ def multiplePathAnimation(graph,pathList):
                     line.set_data(lons[2][:i], lats[2][:i])
                 if i==len(lons[2]):
                     line.set_data(lons[2], lats[2])
-        scatter_list, = [ax.scatter(xCoord,yCoord, s=20, marker='o', c='cyan', label=f'Facteur', alpha=.7)]
+        for j in range(n):
+            scatter_list[j].set_offsets((xCoord[j], yCoord[j]))
         
         return line, scatter_list
 
-    listOfColors=['red','orange', 'yellow','green','blue','purple','brown','black']
+    listOfColors=['red','orange', '#a8ff8c','#59bd59','blue','purple','brown','black']
     n=len(pathList)
-    # A adapter et faire marcher
     nodes=list(graph.nodes)
     cNodes=[[] for _ in range(n)]
     for i in range(n):
@@ -179,7 +187,7 @@ def multiplePathAnimation(graph,pathList):
     yCoord=getNthValueFromEachTab(lats,0)
     
     # Plot the first scatter plot (starting nodes = initial car locations = hospital locations)
-    scatter_list, =[ax.scatter(xCoord,yCoord, s=20, marker='o', c='cyan', label=f'Facteur', alpha=0.7)]
+    scatter_list, =[ax.scatter(xCoord,yCoord, s=20, marker='o', c=listOfColors[i%len(listOfColors)], label=f'Facteur {i+1}', alpha=0.7)]
 
     line, = ax.plot([], [], color='#2dffe0', linewidth=2, alpha=0.7)
 
@@ -187,7 +195,8 @@ def multiplePathAnimation(graph,pathList):
 
     # Création de l'animation
     ani = FuncAnimation(fig, animate, init_func=initAnim, frames=max(len(lons[i]) for i in range(n)),  blit=True, interval=100)
-    
+
+    print("Saving animation...")
     ani.save('./media/route_animation.mp4', dpi=200)
     plt.show()
     

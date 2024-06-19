@@ -129,9 +129,9 @@ def multiplePathAnimation(graph,pathList):
     plt.legend(frameon=False)
 
     # Création de l'animation
-    ani = FuncAnimation(fig, animate, init_func=initAnim, frames=max(len(lons[i]) for i in range(n)),  blit=True, interval=100) #
+    ani = FuncAnimation(fig, animate, init_func=initAnim, frames=max(len(lons[i]) for i in range(n)),  blit=True, interval=100)
     
-    ani.save('./media/animation.mp4', dpi=300) 
+    ani.save('./media/route_animation.mp4', dpi=200)
     plt.show()
     
     plt.close()

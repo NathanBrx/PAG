@@ -7,3 +7,4 @@ no_simpl.py
 priseEnMain.py
 test.py
 *.zip
+.vscode

@@ -5,6 +5,20 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 def createGraph(ville, pays, speed_dic):
+    """
+    ### Paramètres
+    - ville : str
+        - [Nom de la ville]
+    - pays : str
+        - [Nom du pays]
+    - speed_dic : dict
+        - [Dictionnaire des vitesses]
+    ### Opérations
+    - Crée un graphe des routes à partir de la ville et du pays, en mode non simplifié.
+    ### Retour
+    - M : NetworkX graph
+        - [Graphe non orienté]
+    """
     lieu=ville+', '+pays
     M=ox.convert.to_undirected(ox.graph_from_place(lieu, network_type="drive", simplify=False))
     #On ajoute les longueurs des arêtes
@@ -16,7 +30,16 @@ def createGraph(ville, pays, speed_dic):
     return M
 
 def to_eularian(G) :
-    # conversion en graphe eulérien
+    """
+    ### Paramètres
+    - G : NetworkX graph
+        - [Graphe non orienté]
+    ### Opérations
+    - Transforme le graphe en graphe eulérien
+    ### Retour
+    - weighted_edges : List
+        - [Liste des arêtes pondérées]
+    """
     weighted_edges = list(G.edges(keys=True, data=True))
     tmp=[]
     for i in range(len(weighted_edges)):
@@ -27,7 +50,19 @@ def to_eularian(G) :
     return weighted_edges
 
 def create_correspondance_dict(weighted_edges) :
-    # dic de correpondance pour 0-based graph
+    """
+    ### Paramètres
+    - weighted_edges : List
+        - [Liste des arêtes pondérées]
+    ### Opérations
+    - Pour chaque arête, crée sa contrepartie en base 0 et l'ajoute au dictionnaire de correspondance
+    - Crée une nouvelle liste d'arêtes pondérées avec les nouvelles arêtes
+    ### Retour
+    - correspondance : Dict
+        - [Dictionnaire de correspondance]
+    - new_edges : List
+        - [Nouvelle liste des arêtes pondérées]
+    """
     correspondance = {}
     new_edges = []
     i = 0
@@ -42,7 +77,19 @@ def create_correspondance_dict(weighted_edges) :
     return correspondance, new_edges
 
 def file_operations(nodes, new_edges) :
-    # Création du fichier d'edges
+    """
+    ### Paramètres
+    - nodes : int
+        - [Nombre de noeuds]
+    - new_edges : List
+        - [Nouvelle liste des arêtes pondérées]
+    ### Opérations
+    - Ecrit dans un fichier texte les données du graphe sous la forme :
+        - [Nombre de noeuds]
+        - [Nombre d'arêtes]
+        - Puis pour chaque arête :
+        - [noeud_de_départ noeud_de_fin poids]
+    """
     f = open("./media/graph.txt", "w")
     f.write(str(nodes)+"\n"+str(len(new_edges))+"\n")
     for (u,v,w) in new_edges:
@@ -50,6 +97,16 @@ def file_operations(nodes, new_edges) :
     f.close()
 
 def read_result(correspondance) :
+    """
+    ### Paramètres
+    - correspondance : Dict
+        - [Dictionnaire de correspondance]
+    ### Opérations
+    - Lit le fichier texte contenant les résultats du calcul du chinese postman problem
+    ### Retour
+    - path : List
+        - [Liste des noeuds du chemin optimal]
+    """
     read2 = []
     path = []
     with open("./media/results.txt", "r") as f:

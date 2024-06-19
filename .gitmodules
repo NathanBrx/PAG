@@ -1,0 +1,6 @@
+[submodule "facteur"]
+	path = facteur
+	url = https://github.com/NathanBrx/facteur
+[submodule "chinese-postman-problem"]
+	path = chinese-postman-problem
+	url = https://github.com/dilsonpereira/chinese-postman-problem

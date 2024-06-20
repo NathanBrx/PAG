@@ -156,10 +156,9 @@ def multiplePathAnimation(graph,pathList):
             scatter_list[j].set_offsets((xCoord[j], yCoord[j]))
         
         return line, scatter_list
-
-    listOfColors=['red','orange', '#a8ff8c','#59bd59','blue','purple','brown','black']
+    
+    listOfColors=['red','orange', 'yellow','green','blue','purple','brown','black']
     n=len(pathList)
-    nodes=list(graph.nodes)
     cNodes=[[] for _ in range(n)]
     for i in range(n):
         for point in pathList[i]:
@@ -186,17 +185,17 @@ def multiplePathAnimation(graph,pathList):
     """__________________________Animation____________________________________"""
     xCoord=getNthValueFromEachTab(lons,0)
     yCoord=getNthValueFromEachTab(lats,0)
-    
+    scatter_list=[]
     # Plot the first scatter plot (starting nodes = initial car locations = hospital locations)
-    scatter_list, =[ax.scatter(xCoord,yCoord, s=20, marker='o', c=listOfColors[i%len(listOfColors)], label=f'Facteur {i+1}', alpha=0.7)]
+    for i in range(n):
+        scatter_list.append(ax.scatter(xCoord[i],yCoord[i], s=20, marker='o', c=listOfColors[i], label=f'Facteur {i+1}', alpha=0.7))
 
     line, = ax.plot([], [], color='#2dffe0', linewidth=2, alpha=0.7)
 
     plt.legend(frameon=False)
 
     # Création de l'animation
-    ani = FuncAnimation(fig, animate, init_func=initAnim, frames=max(len(lons[i]) for i in range(n)),  blit=True, interval=100)
-
+    ani = FuncAnimation(fig, animate, init_func=initAnim, frames=max(len(lons[i]) for i in range(n)), interval=100) #
     print("Saving animation...")
     ani.save('./media/route_animation.mp4', dpi=200)
     plt.show()

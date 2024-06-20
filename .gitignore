@@ -1,10 +1,6 @@
 __pycache__
 build*
 cache
-chinese-postman-problem/*.o
-chinese-postman-problem/chinese
-no_simpl.py
-priseEnMain.py
-test.py
-*.zip
 .vscode
+media/*.txt
+media/*.mp4

@@ -3,8 +3,10 @@ all: facteur chinese run
 run :
 	python3 cpp.py && ./facteur/build/facteur
 
-facteur: facteur/*.cpp facteur/*.h
-	/usr/bin/cmake --build "facteur/build" --config Debug --target all -j 6 --
+facteur: $(shell pwd)/facteur/build/facteur
+
+$(shell pwd)/facteur/build/facteur:
+	/usr/bin/cmake --build "$(shell pwd)/facteur/build" --config Debug --target all -j 6 --
 
 chinese:
 	cd chinese-postman-problem && make chinese

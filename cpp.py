@@ -1,4 +1,5 @@
 import os
+import argparse
 import networkx as nx
 import osmnx as ox
 import matplotlib.pyplot as plt
@@ -237,9 +238,9 @@ def dividePath(graph, path, n):
     print(lens)
     multiplePathAnimation(graph,paths)
 
-def main() :
-    place = input("Enter the city name: ")
-    nombre_facteurs = int(input("Enter the number of postmen: "))
+def main(city, nf) :
+    place = input("Enter the city name: ") if city == '' else city
+    nombre_facteurs = int(input("Enter the number of postmen: ")) if nf == 0 else nf
     
     speed_dic={'motorway':130,'trunk':90, 'primary':80, 'secondary':50, 'tertiary': 50,'unclassified':50,'residential':30,'living_street':30,'service':10,'parking':20,'road':50}
 
@@ -292,4 +293,9 @@ def main() :
     """
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description='Process city name and number of postmen.')
+    parser.add_argument('city', type=str, nargs='?', default='', help='The name of the city')
+    parser.add_argument('postmen', type=int, nargs='?', default=0, help='The number of postmen')
+
+    args = parser.parse_args()
+    main(args.city, args.postmen)

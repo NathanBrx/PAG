@@ -37,7 +37,7 @@ Once the application is installed, you can start it:
 
 ### Option n°2
 
-1. Type the command ```make <City name> <number of postmen>```
+1. Type the command ```make CITY=<City name> POSTMEN=<number of postmen>```
 
 ## License
 

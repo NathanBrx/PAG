@@ -1,7 +1,10 @@
+CITY ?=
+POSTMEN ?=
+
 all: facteur chinese run
 
 run :
-	python3 cpp.py && ./facteur/build/facteur
+	python3 cpp.py $(CITY) $(POSTMEN) && ./facteur/build/facteur
 
 facteur: $(shell pwd)/facteur/build/facteur
 

@@ -236,10 +236,8 @@ def dividePath(graph, path, n):
                 end+=1
         paths.append(path[beginning:end])
         sums.append(sum(egdeWeight[beginning:end-1]))
-    print(sums, sumPath)
-    lens=[len(p) for p in paths]
-    print(lens)
-    multiplePathAnimation(graph,paths)
+    return paths
+    
 
 def get_departement(ville, pays):
     departements = {"Ain": "01", "Aisne": "02", "Allier": "03", "Alpes-de-Haute-Provence": "04", "Hautes-Alpes": "05",
@@ -261,6 +259,18 @@ def get_departement(ville, pays):
     place=ox.geocode_to_gdf(f"{ville}, {pays}")
     department=place['display_name'][0].split(',')[2]
     return departements[department[1:]]
+
+def get_numberOfHousePerStreet(place,departement):
+    rues = {}
+    with gzip.open(f"./media/adresses-{departement}.csv.gz", "rt") as f:
+        reader = csv.reader(f, delimiter=";")
+        for row in reader:
+            if row[7] == place:
+                if row[4] in rues:
+                    rues[row[4]] += 1
+                else:
+                    rues[row[4]] = 1
+    return rues
 
 def main(city, nf) :
     place = input("Enter the city name: ") if city == '' else city
@@ -292,18 +302,14 @@ def main(city, nf) :
 
     departement = get_departement(place, "France")
     urlretrieve(f"https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/adresses-{departement}.csv.gz", f"./media/adresses-{departement}.csv.gz")
-    rues = {}
-    with gzip.open(f"./media/adresses-{departement}.csv.gz", "rt") as f:
-        reader = csv.reader(f, delimiter=";")
-        for row in reader:
-            if row[7] == place:
-                if row[8] in rues:
-                    rues[row[8]] += 1
-                else:
-                    rues[row[8]] = 1
+    rues = get_numberOfHousePerStreet(place,departement)
 
+    
     print("Dividing path...")
-    dividePath(G, path, nombre_facteurs)
+    paths=dividePath(G, path, nombre_facteurs)
+    
+    print("Creating animation...")
+    multiplePathAnimation(G,paths)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process city name and number of postmen.')

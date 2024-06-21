@@ -3,4 +3,4 @@ build*
 cache
 .vscode
 media/*.txt
-media/*.mp4
+media/route_animation.mp4

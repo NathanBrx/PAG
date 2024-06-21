@@ -1,8 +1,11 @@
 import os
+import csv
+import gzip
 import argparse
 import networkx as nx
 import osmnx as ox
 import matplotlib.pyplot as plt
+from urllib.request import urlretrieve
 from matplotlib.animation import FuncAnimation
 
 def createGraph(ville, pays, speed_dic):
@@ -238,7 +241,7 @@ def dividePath(graph, path, n):
     print(lens)
     multiplePathAnimation(graph,paths)
 
-def get_departement(ville,pays):
+def get_departement(ville, pays):
     departements = {"Ain": "01", "Aisne": "02", "Allier": "03", "Alpes-de-Haute-Provence": "04", "Hautes-Alpes": "05",
     "Alpes-Maritimes": "06", "Ardèche": "07","Ardennes": "08","Ariège": "09","Aube": "10","Aude": "11","Aveyron": "12",
     "Bouches-du-Rhône": "13","Calvados": "14","Cantal": "15","Charente": "16","Charente-Maritime": "17","Cher": "18",
@@ -257,7 +260,7 @@ def get_departement(ville,pays):
     "Martinique": "972","Guyane": "973","La Réunion": "974","Mayotte": "976"}
     place=ox.geocode_to_gdf(f"{ville}, {pays}")
     department=place['display_name'][0].split(',')[2]
-    return departements[department]
+    return departements[department[1:]]
 
 def main(city, nf) :
     place = input("Enter the city name: ") if city == '' else city
@@ -287,31 +290,20 @@ def main(city, nf) :
 
     path = read_result(correspondance)
 
+    departement = get_departement(place, "France")
+    urlretrieve(f"https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/adresses-{departement}.csv.gz", f"./media/adresses-{departement}.csv.gz")
+    rues = {}
+    with gzip.open(f"./media/adresses-{departement}.csv.gz", "rt") as f:
+        reader = csv.reader(f, delimiter=";")
+        for row in reader:
+            if row[7] == place:
+                if row[8] in rues:
+                    rues[row[8]] += 1
+                else:
+                    rues[row[8]] = 1
+
     print("Dividing path...")
     dividePath(G, path, nombre_facteurs)
-
-    """
-    fig, ax = ox.plot_graph_route(G, path, route_color="y", route_linewidth=6, node_size=1, show=False, close=False)
-    plt.show()
-
-    route_nodes = path
-    route_coords = [(G.nodes[node]['y'], G.nodes[node]['x']) for node in route_nodes]
-    point, = ax.plot([], [], 'ro', markersize=8)
-
-    def init():
-        point.set_data([], [])
-        return point,
-
-    def animate(i):
-        point.set_data(route_coords[i][1], route_coords[i][0])
-        return point,
-
-    ani = FuncAnimation(fig, animate, frames=len(route_coords), init_func=init, interval=200, blit=True)
-
-    print("Creating video...")
-
-    ani.save("route_animation.mp4", dpi=500)
-    """
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process city name and number of postmen.')

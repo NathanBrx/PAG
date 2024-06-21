@@ -4,3 +4,4 @@ cache
 .vscode
 media/*.txt
 media/route_animation.mp4
+media/*.csv.gz

@@ -8,7 +8,7 @@ run :
 
 facteur: $(shell pwd)/facteur/build/facteur
 
-$(shell pwd)/facteur/build/facteur:
+$(shell pwd)/facteur/build/facteur: $(shell pwd)/facteur/*.cpp $(shell pwd)/facteur/*.h
 	/usr/bin/cmake --build "$(shell pwd)/facteur/build" --config Debug --target all -j 6 --
 
 chinese:

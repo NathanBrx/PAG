@@ -279,6 +279,10 @@ def get_letterPerStreetDivided(graph,paths,Streets):
     for path in paths:
         division.append([])
         visited={street:False for street in Streets}
+        visited["Pas de nom"]=False
+        notVisited={{street:True for street in Streets}}
+        notVisited["Pas de nom"]=True
+        postman=[]
         for i in range(len(path)-1):
             x=graph.get_edge_data(path[i],path[i+1])
             for key in x:
@@ -290,11 +294,27 @@ def get_letterPerStreetDivided(graph,paths,Streets):
                     if streetName in Streets and not (visited[streetName]):
                         division[f].append((streetName,Streets[streetName]))
                         visited[streetName]=True
+                        notVisited[streetName]=False
                 else:
                     #print("Pas de nom")
-                    pass
+                    if not visited["Pas de nom"]:
+                        division[f].append(("Pas de  nom",1))
+                        visited['Pas de nom']=True
+                        postman.append(f)
         print("Done for this one")
         f+=1
+        
+    letters=0
+    for street in Streets.keys():
+        if notVisited[street]:
+            letters+=Streets[street]
+    if letters%len(postman)!=0:
+        reste=letters%len(postman)
+        letters-=reste
+    for i in postman:
+        for l in division[i]:
+            if l[0]=="Pas de nom":
+                pass
     print(division)
     return division
 

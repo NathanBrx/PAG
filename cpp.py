@@ -24,7 +24,7 @@ def createGraph(ville, pays, speed_dic):
         - [Graphe non orienté]
     """
     lieu=ville+', '+pays
-    M=ox.convert.to_undirected(ox.graph_from_place(lieu, network_type="drive", simplify=False))
+    M=ox.convert.to_undirected(ox.graph_from_place(lieu, network_type="all", simplify=False))
     #On ajoute les longueurs des arêtes
     M=ox.distance.add_edge_lengths(M)
     #On ajoute les limitations de vitesses
@@ -272,6 +272,56 @@ def get_numberOfHousePerStreet(place,departement):
                     rues[row[4]] = 1
     return rues
 
+def get_letterPerStreetDivided(graph,paths,Streets):
+    division=[]
+    pdn="Pas de nom"
+    print(Streets)
+    f=0
+    notVisited={street:True for street in Streets}
+    notVisited[pdn]=True
+    postman=[0 for _ in range(len(paths))]
+    for path in paths:
+        division.append([])
+        visited={street:False for street in Streets}
+        visited[pdn]=False
+        for i in range(len(path)-1):
+            x=graph.get_edge_data(path[i],path[i+1])
+            for key in x:
+                #print(x[key].keys())
+            #affiche tous les segments de rue pour un certain nom
+                if ('name' in x[key]):
+                    
+                    streetName=x[key]['name']
+                    if streetName in Streets and not (visited[streetName]):
+                        division[f].append((streetName,Streets[streetName]))
+                        visited[streetName]=True
+                        notVisited[streetName]=False
+                else:
+                    if not visited[pdn]:
+                        division[f].append((pdn,1))
+                        visited['Pas de nom']=True
+                    postman[f]+=1
+        print("Done for this one")
+        f+=1
+        
+    letters=0
+    sp=sum(postman)
+    #On trouve le nombre de lettre des rues qui n'ont pas été marqué comme distribué
+    for street in Streets.keys():
+        if notVisited[street]:
+            letters+=Streets[street]
+    #On les répartis selon le nombre de segments sans nom croisé
+    t=0
+    for i in range(len(postman)):
+        if postman[i]!=0:
+            for l in range(len(division[i])):
+                if division[i][l][0]==pdn:
+                    print(division[i][l], round(letters*(postman[i]/sp)))
+                    t+=round(letters*(postman[i]/sp))
+                    division[i][l]=(pdn,round(letters*(postman[i]/sp)))
+    print(t, letters)
+    return division
+
 def main(city, nf) :
     place = input("Enter the city name: ") if city == '' else city
     nombre_facteurs = int(input("Enter the number of postmen: ")) if nf == 0 else nf
@@ -303,13 +353,14 @@ def main(city, nf) :
     departement = get_departement(place, "France")
     urlretrieve(f"https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/adresses-{departement}.csv.gz", f"./media/adresses-{departement}.csv.gz")
     rues = get_numberOfHousePerStreet(place,departement)
-
     
     print("Dividing path...")
     paths=dividePath(G, path, nombre_facteurs)
     
+    get_letterPerStreetDivided(G,paths,rues)
+    
     print("Creating animation...")
-    multiplePathAnimation(G,paths)
+    #multiplePathAnimation(G,paths)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process city name and number of postmen.')

@@ -274,15 +274,16 @@ def get_numberOfHousePerStreet(place,departement):
 
 def get_letterPerStreetDivided(graph,paths,Streets):
     division=[]
+    pdn="Pas de nom"
     print(Streets)
     f=0
+    notVisited={street:True for street in Streets}
+    notVisited[pdn]=True
+    postman=[0 for _ in range(len(paths))]
     for path in paths:
         division.append([])
         visited={street:False for street in Streets}
-        visited["Pas de nom"]=False
-        notVisited={{street:True for street in Streets}}
-        notVisited["Pas de nom"]=True
-        postman=[]
+        visited[pdn]=False
         for i in range(len(path)-1):
             x=graph.get_edge_data(path[i],path[i+1])
             for key in x:
@@ -296,26 +297,29 @@ def get_letterPerStreetDivided(graph,paths,Streets):
                         visited[streetName]=True
                         notVisited[streetName]=False
                 else:
-                    #print("Pas de nom")
-                    if not visited["Pas de nom"]:
-                        division[f].append(("Pas de  nom",1))
+                    if not visited[pdn]:
+                        division[f].append((pdn,1))
                         visited['Pas de nom']=True
-                        postman.append(f)
+                    postman[f]+=1
         print("Done for this one")
         f+=1
         
     letters=0
+    sp=sum(postman)
+    #On trouve le nombre de lettre des rues qui n'ont pas été marqué comme distribué
     for street in Streets.keys():
         if notVisited[street]:
             letters+=Streets[street]
-    if letters%len(postman)!=0:
-        reste=letters%len(postman)
-        letters-=reste
-    for i in postman:
-        for l in division[i]:
-            if l[0]=="Pas de nom":
-                pass
-    print(division)
+    #On les répartis selon le nombre de segments sans nom croisé
+    t=0
+    for i in range(len(postman)):
+        if postman[i]!=0:
+            for l in range(len(division[i])):
+                if division[i][l][0]==pdn:
+                    print(division[i][l], round(letters*(postman[i]/sp)))
+                    t+=round(letters*(postman[i]/sp))
+                    division[i][l]=(pdn,round(letters*(postman[i]/sp)))
+    print(t, letters)
     return division
 
 def main(city, nf) :
@@ -356,7 +360,7 @@ def main(city, nf) :
     get_letterPerStreetDivided(G,paths,rues)
     
     print("Creating animation...")
-    multiplePathAnimation(G,paths)
+    #multiplePathAnimation(G,paths)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process city name and number of postmen.')

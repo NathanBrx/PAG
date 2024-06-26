@@ -24,7 +24,7 @@ def createGraph(ville, pays, speed_dic):
         - [Graphe non orienté]
     """
     lieu=ville+', '+pays
-    M=ox.convert.to_undirected(ox.graph_from_place(lieu, network_type="all", simplify=False))
+    M=ox.convert.to_undirected(ox.graph_from_place(lieu, network_type="drive_service", simplify=False))
     #On ajoute les longueurs des arêtes
     M=ox.distance.add_edge_lengths(M)
     #On ajoute les limitations de vitesses
@@ -320,6 +320,28 @@ def get_letterPerStreetDivided(graph,paths,Streets):
                     t+=round(letters*(postman[i]/sp))
                     division[i][l]=(pdn,round(letters*(postman[i]/sp)))
     print(t, letters)
+    print(division)
+    totaux = [sum([lettre for _, lettre in facteur]) for facteur in division]
+
+    with open("media/charts", "w") as f:
+        for i in range(len(division)):
+            f.write(f"{i}\n")
+            f.write(f"0|100\n")
+            timecode = 0
+            addlettres = 0
+            for _, lettres in division[i]:
+                if lettres > 50:
+                    timediff = (6 / len(division[i]) * timecode) / 3
+                    for _ in range(3):
+                        addlettres += lettres / 3
+                        f.write(f"{(6 / len(division[i]) * timecode)}|{((totaux[i] - addlettres) / totaux[i]) * 100}\n")
+                        timecode += timediff / 3
+                else:
+                    addlettres += lettres
+                    f.write(f"{(6 / len(division[i]) * timecode)}|{((totaux[i] - addlettres) / totaux[i]) * 100}\n")
+                timecode += 1
+            f.write("6|0\n")
+
     return division
 
 def main(city, nf) :

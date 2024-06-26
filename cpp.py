@@ -326,20 +326,26 @@ def get_letterPerStreetDivided(graph,paths,Streets):
     with open("media/charts", "w") as f:
         for i in range(len(division)):
             f.write(f"{i}\n")
+            f.write(f"{totaux[i]}\n")
             f.write(f"0|100\n")
-            timecode = 0
+            timecode = 1
             addlettres = 0
+            bigNumber = False
+            for _, second in division[i]:
+                if second > 50:
+                    bigNumber = True
+                    break
             for _, lettres in division[i]:
                 if lettres > 50:
-                    timediff = (6 / len(division[i]) * timecode) / 3
+                    timediff = (6 / (len(division[i]) + 3))
                     for _ in range(3):
                         addlettres += lettres / 3
-                        f.write(f"{(6 / len(division[i]) * timecode)}|{((totaux[i] - addlettres) / totaux[i]) * 100}\n")
-                        timecode += timediff / 3
+                        f.write(f"{(6 / (len(division[i]) + 3)) * timecode}|{((totaux[i] - addlettres) / totaux[i]) * 100}\n")
+                        timecode += timediff
                 else:
                     addlettres += lettres
-                    f.write(f"{(6 / len(division[i]) * timecode)}|{((totaux[i] - addlettres) / totaux[i]) * 100}\n")
-                timecode += 1
+                    f.write(f"{(6 / (len(division[i]) + 3 if bigNumber else len(division[i]))) * timecode}|{((totaux[i] - addlettres) / totaux[i]) * 100}\n")
+                    timecode += 1
             f.write("6|0\n")
 
     return division

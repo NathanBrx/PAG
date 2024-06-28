@@ -395,7 +395,7 @@ def main(city, nf) :
     get_letterPerStreetDivided(G,paths,rues)
     
     print("Creating animation...")
-    #multiplePathAnimation(G,paths)
+    multiplePathAnimation(G,paths)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process city name and number of postmen.')
